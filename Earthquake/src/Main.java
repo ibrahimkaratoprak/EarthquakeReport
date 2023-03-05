@@ -45,7 +45,7 @@ public class Main {
 
         // Process the API response
         Root objec = new Gson().fromJson(response.body(), Root.class);
-        if ((long) objec.features.size() == 0) {
+        if ( objec.features.size() == 0) {
             System.out.printf("No Earthquakes were recorded past %d days.%n", diff.getDays());
         } else {
             System.out.printf("%n%d Earthquakes were recorded past %d days.%n %n", objec.features.size(), diff.getDays());
