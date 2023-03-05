@@ -1,8 +1,6 @@
 # EarthquakeReport
 
-This project was developed by [Ibrahim Karatoprak](https://github.com/ibrahimkaratoprak) (me) as a job application project for "Java Developer" position.
-
-
+This project was developed by [Ibrahim Karatoprak](https://github.com/ibrahimkaratoprak) as a job application project for the "Java Developer" position.
 
 ## Used API
 
@@ -21,6 +19,6 @@ This project was developed by [Ibrahim Karatoprak](https://github.com/ibrahimkar
 
 ## Running Locally
 
-Make sure you have [Intellij IDEA](https://www.jetbrains.com/idea/download/) with minimum [JDK 16](https://www.oracle.com/java/technologies/javase/jdk16-archive-downloads.html) installed.
+Make sure you have [Intellij IDEA](https://www.jetbrains.com/idea/download/) with a minimum of [JDK 16](https://www.oracle.com/java/technologies/javase/jdk16-archive-downloads.html) installed.
 
-You can run project using Main configuration on Intellij IDEA.
+You can run the project using the Main configuration on Intellij IDEA.
