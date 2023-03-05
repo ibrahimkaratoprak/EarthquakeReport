@@ -18,7 +18,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        // Kullanıcıdan başlangıç ve bitiş tarihlerini al
+        // Get start and end dates from the user
         Scanner scanner = new Scanner(System.in);
         System.out.print("Start time (yyyy/MM/dd): ");
         String startTimeStr = scanner.next();
@@ -27,7 +27,7 @@ public class Main {
         String endTimeStr = currentDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
 
-        // Tarihleri doğru formata dönüştür
+        // Convert dates to the correct format
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd' 'HH:mm:ss:S");
         String[] arrOft1 = startTimeStr.split("/");
         LocalDate t1 = LocalDate.of(Integer.parseInt(arrOft1[0]), Integer.parseInt(arrOft1[1]), Integer.parseInt(arrOft1[2]));
@@ -35,7 +35,7 @@ public class Main {
         LocalDate t2 = LocalDate.of(Integer.parseInt(arrOft2[0]), Integer.parseInt(arrOft2[1]), Integer.parseInt(arrOft2[2]));
         Period diff = Period.between(t1, t2);
 
-        // API çağrısı için HttpClient oluştur ve isteği gönder
+        // Create HttpClient for API call and send the request
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(String.format("https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=%s&endtime=%s", t1, t2)))
@@ -43,13 +43,13 @@ public class Main {
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        // API yanıtını işle
+        // Process the API response
         Root objec = new Gson().fromJson(response.body(), Root.class);
         if ((long) objec.features.size() == 0) {
             System.out.printf("No Earthquakes were recorded past %d days.%n", diff.getDays());
         } else {
             System.out.printf("%n%d Earthquakes were recorded past %d days.%n %n", objec.features.size(), diff.getDays());
-            // Depremleri yazdır
+            // Print the earthquakes
             for (Feature feature : objec.features) {
                 Timestamp timestamp = new Timestamp(feature.properties.time);
                 System.out.printf("%s, %.2f, %s %n", feature.properties.place, feature.properties.magnitude, simpleDateFormat.format(timestamp.getTime()));
