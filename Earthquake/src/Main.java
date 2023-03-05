@@ -18,16 +18,20 @@ public class Main {
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        // Get start and end dates from the user
+        // Get the start and end dates from the user
         Scanner scanner = new Scanner(System.in);
         System.out.print("Start time (yyyy/MM/dd): ");
         String startTimeStr = scanner.next();
+
+        // Get the location of the earthquake from the user
+        System.out.print("Enter location:  ");
+        String keyword = scanner.next();
 
         LocalDate currentDate = LocalDate.now();
         String endTimeStr = currentDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
 
-        // Convert dates to the correct format
+        // Convert the dates to the correct format
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd' 'HH:mm:ss:S");
         String[] arrOft1 = startTimeStr.split("/");
         LocalDate t1 = LocalDate.of(Integer.parseInt(arrOft1[0]), Integer.parseInt(arrOft1[1]), Integer.parseInt(arrOft1[2]));
@@ -35,7 +39,7 @@ public class Main {
         LocalDate t2 = LocalDate.of(Integer.parseInt(arrOft2[0]), Integer.parseInt(arrOft2[1]), Integer.parseInt(arrOft2[2]));
         Period diff = Period.between(t1, t2);
 
-        // Create HttpClient for API call and send the request
+        // Create an HttpClient for the API call and send the request
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(String.format("https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=%s&endtime=%s", t1, t2)))
@@ -45,15 +49,25 @@ public class Main {
 
         // Process the API response
         Root objec = new Gson().fromJson(response.body(), Root.class);
-        if ( objec.features.size() == 0) {
+        int count = 0;
+        if (objec.features.size() == 0) {
             System.out.printf("No Earthquakes were recorded past %d days.%n", diff.getDays());
         } else {
             System.out.printf("%n%d Earthquakes were recorded past %d days.%n %n", objec.features.size(), diff.getDays());
             // Print the earthquakes
             for (Feature feature : objec.features) {
                 Timestamp timestamp = new Timestamp(feature.properties.time);
-                System.out.printf("%s, %.2f, %s %n", feature.properties.place, feature.properties.magnitude, simpleDateFormat.format(timestamp.getTime()));
+                if (feature.properties.place.toLowerCase().contains(keyword.toLowerCase())) {
+                    System.out.printf("%s, %.2f, %s %n", feature.properties.place, feature.properties.magnitude, simpleDateFormat.format(timestamp.getTime()));
+                    count++;
+                }
+            }
+            if (count == 0) {
+                System.out.printf("No earthquakes found for the keyword '%s'.%n", keyword);
+            } else {
+                System.out.printf("%n%d Earthquakes found for the keyword '%s'.%n", count, keyword);
             }
         }
     }
+
 }
